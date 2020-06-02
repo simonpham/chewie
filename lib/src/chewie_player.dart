@@ -270,6 +270,17 @@ class ChewieController extends ChangeNotifier {
 
   /// Defines a custom RoutePageBuilder for the fullscreen
   final ChewieRoutePageBuilder routePageBuilder;
+  /// Defines the last event
+  ChewieEvent event;
+
+  /// Defines dispose
+  @override
+  void dispose() {
+    event = ChewieEvent.STORE;
+    notifyListeners();
+
+    super.dispose();
+  }
 
   static ChewieController of(BuildContext context) {
     final chewieControllerProvider =
@@ -282,6 +293,7 @@ class ChewieController extends ChangeNotifier {
   bool _isFullScreen = false;
 
   bool get isFullScreen => _isFullScreen;
+  ChewieEvent get lastEvent => event;
 
   bool get isPlaying => videoPlayerController.value.isPlaying;
 
@@ -337,6 +349,8 @@ class ChewieController extends ChangeNotifier {
   }
 
   Future<void> play() async {
+    event = ChewieEvent.PLAY;
+    notifyListeners();
     await videoPlayerController.play();
   }
 
@@ -345,15 +359,25 @@ class ChewieController extends ChangeNotifier {
   }
 
   Future<void> pause() async {
+    event = ChewieEvent.PAUSE;
+    notifyListeners();
     await videoPlayerController.pause();
   }
 
   Future<void> seekTo(Duration moment) async {
+    event = ChewieEvent.SEEK;
+    notifyListeners();
     await videoPlayerController.seekTo(moment);
   }
 
   Future<void> setVolume(double volume) async {
     await videoPlayerController.setVolume(volume);
+  }
+
+  onBack(context) {
+    event = ChewieEvent.STORE;
+    notifyListeners();
+    Navigator.of(context).pop();
   }
 }
 
@@ -371,4 +395,13 @@ class _ChewieControllerProvider extends InheritedWidget {
   @override
   bool updateShouldNotify(_ChewieControllerProvider old) =>
       controller != old.controller;
+}
+
+enum ChewieEvent {
+  PLAY,
+  STOP,
+  ERROR,
+  PAUSE,
+  SEEK,
+  STORE,
 }
