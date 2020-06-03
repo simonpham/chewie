@@ -374,7 +374,7 @@ class ChewieController extends ChangeNotifier {
     await videoPlayerController.setVolume(volume);
   }
 
-  onBack(context) {
+  void onBack(BuildContext context) {
     event = ChewieEvent.STORE;
     notifyListeners();
     Navigator.of(context).pop();

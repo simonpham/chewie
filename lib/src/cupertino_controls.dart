@@ -77,8 +77,8 @@ class _CupertinoControlsState extends State<CupertinoControls> {
           absorbing: _hideStuff,
           child: Column(
             children: <Widget>[
-              _buildTopBar(
-                  backgroundColor, iconColor, barHeight, buttonPadding),
+              _buildTopBar(backgroundColor, iconColor, barHeight, buttonPadding,
+                  context),
               _buildHitArea(),
               _buildBottomBar(backgroundColor, iconColor, barHeight),
             ],
@@ -177,9 +177,10 @@ class _CupertinoControlsState extends State<CupertinoControls> {
     Color iconColor,
     double barHeight,
     double buttonPadding,
+    BuildContext context,
   ) {
     return GestureDetector(
-      onTap: _onExpandCollapse,
+      onTap: () => _onExpandCollapse(context),
       child: AnimatedOpacity(
         opacity: _hideStuff ? 0.0 : 1.0,
         duration: Duration(milliseconds: 300),
@@ -196,9 +197,7 @@ class _CupertinoControlsState extends State<CupertinoControls> {
               color: backgroundColor,
               child: Center(
                 child: Icon(
-                  chewieController.isFullScreen
-                      ? OpenIconicIcons.fullscreenExit
-                      : OpenIconicIcons.fullscreenEnter,
+                  OpenIconicIcons.fullscreenExit,
                   color: iconColor,
                   size: 12.0,
                 ),
@@ -385,6 +384,7 @@ class _CupertinoControlsState extends State<CupertinoControls> {
     Color iconColor,
     double barHeight,
     double buttonPadding,
+    BuildContext context,
   ) {
     return Container(
       height: barHeight,
@@ -397,7 +397,7 @@ class _CupertinoControlsState extends State<CupertinoControls> {
         children: <Widget>[
           chewieController.allowFullScreen
               ? _buildExpandButton(
-                  backgroundColor, iconColor, barHeight, buttonPadding)
+                  backgroundColor, iconColor, barHeight, buttonPadding, context)
               : Container(),
           Expanded(child: Container()),
           chewieController.allowMuting
@@ -438,17 +438,8 @@ class _CupertinoControlsState extends State<CupertinoControls> {
     }
   }
 
-  void _onExpandCollapse() {
-    setState(() {
-      _hideStuff = true;
-
-      chewieController.toggleFullScreen();
-      _expandCollapseTimer = Timer(Duration(milliseconds: 300), () {
-        setState(() {
-          _cancelAndRestartTimer();
-        });
-      });
-    });
+  void _onExpandCollapse(BuildContext context) {
+    Navigator.of(context).pop();
   }
 
   Widget _buildProgressBar() {
@@ -496,15 +487,12 @@ class _CupertinoControlsState extends State<CupertinoControls> {
   }
 
   void _playPause() {
-      bool isFinished;
-      if( _latestValue.duration != null)
-      {
-        isFinished = _latestValue.position >= _latestValue.duration;
-      }
-      else
-      {
-        isFinished = false;
-      }
+    bool isFinished;
+    if (_latestValue.duration != null) {
+      isFinished = _latestValue.position >= _latestValue.duration;
+    } else {
+      isFinished = false;
+    }
 
     setState(() {
       if (controller.value.isPlaying) {
