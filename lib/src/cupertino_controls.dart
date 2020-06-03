@@ -197,7 +197,7 @@ class _CupertinoControlsState extends State<CupertinoControls> {
               color: backgroundColor,
               child: Center(
                 child: Icon(
-                  OpenIconicIcons.fullscreenExit,
+                  OpenIconicIcons.x,
                   color: iconColor,
                   size: 12.0,
                 ),
