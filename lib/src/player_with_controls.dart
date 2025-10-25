@@ -89,6 +89,7 @@ class PlayerWithControls extends StatelessWidget {
           onInteractionEnd: chewieController.zoomAndPan
               ? (_) => playerNotifier.hideStuff = false
               : null,
+          alignment: Alignment.center,
           child: child,
         );
       }
